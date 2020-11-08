@@ -2,6 +2,8 @@
 
 using namespace std;
 
+char usage[] = "./out/h2b64 <hex string>";
+
 /**
  * Convert a hex character to an integer.
  */
@@ -13,9 +15,14 @@ unsigned int _hex_to_int(char c)
     {
         i = i - 97 + 10;
     }
-    else
+    else if (i >= 48 && i <= 57)
     {
         i -= ((int)'0');
+    }
+    else
+    {
+        cout << "Non hex string cannot be parsed." << endl;
+        exit(-1);
     }
 
     return i;
@@ -114,6 +121,7 @@ int main(int argc, char * argv[])
 {
     if (argc != 2)
     {
+        cout << usage << endl;
         return -1;
     }
 
