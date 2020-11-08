@@ -1,9 +1,14 @@
 CC=g++
 OUT_DIR=./out
 
-h2b64: hex_to_base64.cpp
+dir:
 	if [ ! -d "./out/" ]; then mkdir $(OUT_DIR); fi
-	$(CC) -o $(OUT_DIR)/h2b64 hex_to_base64.cpp
+
+h2b64: dir common.cpp hex_to_base64.cpp
+	$(CC) -o $(OUT_DIR)/h2b64 common.cpp hex_to_base64.cpp
+
+fxor: dir common.cpp fixed_xor.cpp
+	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp
 
 clean:
 	rm -rf $(OUT_DIR)/*

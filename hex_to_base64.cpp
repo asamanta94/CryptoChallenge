@@ -1,32 +1,10 @@
 #include <iostream>
 
+#include "common.h"
+
 using namespace std;
 
 char usage[] = "./out/h2b64 <hex string>";
-
-/**
- * Convert a hex character to an integer.
- */
-unsigned int _hex_to_int(char c)
-{
-    unsigned int i = (int)c;
-
-    if (i >= 97 && i <= 102)
-    {
-        i = i - 97 + 10;
-    }
-    else if (i >= 48 && i <= 57)
-    {
-        i -= ((int)'0');
-    }
-    else
-    {
-        cout << "Non hex string cannot be parsed." << endl;
-        exit(-1);
-    }
-
-    return i;
-}
 
 /**
  * Convert an integer to base64.
