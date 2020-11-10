@@ -7,8 +7,8 @@ dir:
 h2b64: dir common.cpp hex_to_base64.cpp
 	$(CC) -o $(OUT_DIR)/h2b64 common.cpp hex_to_base64.cpp
 
-fxor: dir common.cpp fixed_xor.cpp
-	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp
+fxor: dir common.cpp fixed_xor.cpp fixed_xor_run.cpp
+	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp fixed_xor_run.cpp
 
 clean:
 	rm -rf $(OUT_DIR)/*
