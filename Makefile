@@ -10,5 +10,8 @@ h2b64: dir common.cpp hex_to_base64.cpp
 fxor: dir common.cpp fixed_xor.cpp fixed_xor_run.cpp
 	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp fixed_xor_run.cpp
 
+c3: dir common.cpp single_byte_xor.cpp c3.cpp
+	$(CC) -o $(OUT_DIR)/c3 common.cpp single_byte_xor.cpp c3.cpp
+
 clean:
 	rm -rf $(OUT_DIR)/*
