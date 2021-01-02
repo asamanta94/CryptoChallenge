@@ -13,5 +13,8 @@ fxor: dir common.cpp fixed_xor.cpp fixed_xor_run.cpp
 c3: dir common.cpp single_byte_xor.cpp c3.cpp
 	$(CC) -o $(OUT_DIR)/c3 common.cpp single_byte_xor.cpp c3.cpp
 
+c4: dir common.cpp single_byte_xor.cpp c4.cpp
+	$(CC) -o $(OUT_DIR)/c4 common.cpp single_byte_xor.cpp c4.cpp
+
 clean:
 	rm -rf $(OUT_DIR)/*
