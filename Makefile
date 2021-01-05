@@ -16,5 +16,8 @@ c3: dir common.cpp single_byte_xor.cpp c3.cpp
 c4: dir common.cpp single_byte_xor.cpp c4.cpp
 	$(CC) -o $(OUT_DIR)/c4 common.cpp single_byte_xor.cpp c4.cpp
 
+c5: dir common.cpp repeat_key_xor.cpp c5.cpp
+	$(CC) -o $(OUT_DIR)/c5 common.cpp repeat_key_xor.cpp c5.cpp
+
 clean:
 	rm -rf $(OUT_DIR)/*
