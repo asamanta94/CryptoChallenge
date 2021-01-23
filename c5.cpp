@@ -22,7 +22,10 @@ void encrypt(char * file_name)
     while (getline(in_file, line))
     {
         text += line;
+        text += '\n';
     }
+
+    text.pop_back();
 
     cout << repeat_key_xor(text, "ICE") << endl;
 
