@@ -21,5 +21,8 @@ c4: dir common.cpp single_byte_xor.cpp c4.cpp
 c5: dir common.cpp repeat_key_xor.cpp c5.cpp
 	$(CC) $(CFLAGS) -o $(OUT_DIR)/c5 common.cpp repeat_key_xor.cpp c5.cpp
 
+c6_hamm: dir common.cpp hamming_distance.cpp c6_hamm.cpp
+	$(CC) $(CFLAGS) -o $(OUT_DIR)/c6_hamm common.cpp hamming_distance.cpp c6_hamm.cpp
+
 clean:
 	rm -rf $(OUT_DIR)/*
