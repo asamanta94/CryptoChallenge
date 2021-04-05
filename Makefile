@@ -9,6 +9,9 @@ dir:
 h2b64: dir common.cpp hex_to_base64.cpp
 	$(CC) -o $(OUT_DIR)/h2b64 common.cpp hex_to_base64.cpp
 
+b642h: dir common.cpp base64_to_hex.cpp
+	$(CC) -o $(OUT_DIR)/b642h common.cpp base64_to_hex.cpp
+
 fxor: dir common.cpp fixed_xor.cpp fixed_xor_run.cpp
 	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp fixed_xor_run.cpp
 
