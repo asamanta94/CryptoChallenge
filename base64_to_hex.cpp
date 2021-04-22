@@ -82,11 +82,12 @@ void base64_to_hex(string base64_string)
 
     if (count > 0)
     {
+        cout << padding_count << endl;
         int k = (padding_count == 1) ? 2 : 1;
         for (int i = 0; i < k; i++)
         {
-            count = rolling_num & (mask >> (8 * k));
-            count = count >> (8 * (2 - k));
+            count = rolling_num & (mask >> (8 * i));
+            count = count >> (8 * (2 - i));
             hex_str += _int_to_hex((count & 0x000000F0) >> 4);
             hex_str += _int_to_hex(count & 0x0000000F);
         }
