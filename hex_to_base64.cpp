@@ -42,6 +42,17 @@ void _int_to_base64(unsigned int num, char * base64_string, unsigned int pos)
     }
 }
 
+/**
+ * Base 64 encoding => Converting data to Base 64.
+ *
+ * 2 ^ (no. of positions) = (no. of numbers that can be represented)
+ * 2 ^ 1 = 2 (0, 1)
+ * 2 ^ 2 = 4 [0 - 3]
+ * 2 ^ 3 = 8 [0 - 7]
+ * ...
+ * 2 ^ 6 = 64 [0 - 63] <- Base 64
+ *
+ */
 char * hex_to_base64(char * text)
 {
     char * iter = text;
