@@ -8,8 +8,6 @@
 
 using namespace std;
 
-char usage[] = "./out/h2b64 <hex string>";
-
 /**
  * Convert an base64 character to an integer.
  */
@@ -46,14 +44,12 @@ unsigned int base64_to_int(char c)
 /**
  * Convert an base64 string to a hex string.
  */
-void base64_to_hex(string base64_string)
+void base64_to_hex(string base64_string, string &hex_string)
 {
     unsigned int count = 0;
     unsigned int rolling_num = 0;
     unsigned int padding_count = 0;
     unsigned int mask = 0x00FF0000;
-
-    string hex_str;
 
     char * c = (char *)base64_string.c_str();
 
@@ -66,8 +62,8 @@ void base64_to_hex(string base64_string)
             {
                 count = rolling_num & (mask >> (8 * j));
                 count = count >> (8 * (2 - j));
-                hex_str += _int_to_hex((count & 0x000000F0) >> 4);
-                hex_str += _int_to_hex(count & 0x0000000F);
+                hex_string += _int_to_hex((count & 0x000000F0) >> 4);
+                hex_string += _int_to_hex(count & 0x0000000F);
             }
 
             count = 0;
@@ -91,26 +87,13 @@ void base64_to_hex(string base64_string)
         {
             count = rolling_num & (mask >> (8 * i));
             count = count >> (8 * (2 - i));
-            hex_str += _int_to_hex((count & 0x000000F0) >> 4);
-            hex_str += _int_to_hex(count & 0x0000000F);
+            hex_string += _int_to_hex((count & 0x000000F0) >> 4);
+            hex_string += _int_to_hex(count & 0x0000000F);
         }
     }
 
 #if DEBUG
-    cout << hex_str << endl;
+    cout << hex_string << endl;
 #endif
 
-}
-
-int main(int argc, char * argv[])
-{
-    if (argc != 2)
-    {
-        cout << usage << endl;
-        return -1;
-    }
-
-    base64_to_hex(argv[1]);
-
-    return 0;
 }
