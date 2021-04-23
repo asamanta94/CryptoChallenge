@@ -4,6 +4,8 @@
 
 #include "common.h"
 
+#define DEBUG   0
+
 using namespace std;
 
 char usage[] = "./out/h2b64 <hex string>";
@@ -55,8 +57,6 @@ void base64_to_hex(string base64_string)
 
     char * c = (char *)base64_string.c_str();
 
-    // Figure out padding first?
-
     for (int i = 0; i < base64_string.length(); i++)
     {
         if (count == 4)
@@ -82,7 +82,10 @@ void base64_to_hex(string base64_string)
 
     if (count > 0)
     {
-        cout << padding_count << endl;
+        #if DEBUG
+            cout << padding_count << endl;
+        #endif
+
         int k = (padding_count == 1) ? 2 : 1;
         for (int i = 0; i < k; i++)
         {
@@ -93,7 +96,10 @@ void base64_to_hex(string base64_string)
         }
     }
 
+#if DEBUG
     cout << hex_str << endl;
+#endif
+
 }
 
 int main(int argc, char * argv[])
