@@ -28,7 +28,7 @@ c6_hamm: dir common.cpp hamming_distance.cpp c6_hamm.cpp
 	$(CC) $(CFLAGS) -o $(OUT_DIR)/c6_hamm common.cpp hamming_distance.cpp c6_hamm.cpp
 
 c6: dir common.cpp base64_to_hex.cpp c6.cpp
-	$(CC) -o $(OUT_DIR)/c6 common.cpp base64_to_hex.cpp c6.cpp
+	$(CC) -o $(OUT_DIR)/c6 common.cpp hamming_distance.cpp base64_to_hex.cpp c6.cpp
 
 clean:
 	rm -rf $(OUT_DIR)/*
