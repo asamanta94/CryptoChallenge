@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-using namespace std;
-
 /**
  * Convert a hex character to an integer.
  */
@@ -51,3 +49,25 @@ char _int_to_hex(unsigned int i)
 
     return c;
 }
+
+/**
+ * Convert a string of hex characters to a string of ASCII characters.
+ */
+void _hex_to_ascii(string& hex_str, string& char_str)
+{
+    unsigned int i = 0;
+    unsigned int hex_str_sz = hex_str.size();
+    unsigned int hex_str_limit = hex_str_sz - (hex_str_sz & 0x1);
+
+    while (i < hex_str_limit)
+    {
+        char_str += (char)((_hex_to_int(hex_str[i]) << 4) | (_hex_to_int(hex_str[i + 1])));
+        i += 2;
+    }
+
+    if (hex_str_sz & 0x1)
+    {
+        char_str += (char)(_hex_to_int(hex_str[i]) << 4);
+    }
+}
+

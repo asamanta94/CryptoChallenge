@@ -2,6 +2,9 @@
 CC=clang++
 OUT_DIR=./out
 CFLAGS=-Wall -std=c++11
+CPPUTEST_HOME=../cpputest-3.8
+CPPUTEST_FLAGS=-I$(CPPUTEST_HOME)/include
+CPPUTEST_LD_LIBRARIES=-L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 dir:
 	if [ ! -d "./out/" ]; then mkdir $(OUT_DIR); fi
@@ -29,6 +32,9 @@ c6_hamm: dir common.cpp hamming_distance.cpp c6_hamm.cpp
 
 c6: dir common.cpp base64_to_hex.cpp c6.cpp
 	$(CC) -o $(OUT_DIR)/c6 common.cpp hamming_distance.cpp base64_to_hex.cpp c6.cpp
+
+test: dir common.cpp test_common.cpp
+	$(CC) -o $(OUT_DIR)/test common.cpp test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
 
 clean:
 	rm -rf $(OUT_DIR)/*
