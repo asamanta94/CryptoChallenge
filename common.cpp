@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "common.h"
 
@@ -146,6 +147,28 @@ void _hex_to_bytes(char * hex_str, uint8_t * bytes)
         hex_str_iter++;
         byte++;
     }
+}
+
+/**
+ * Read a file and get the text.
+ */
+void _read_file(char * file_name, string &file_text)
+{
+    ifstream in_file(file_name);
+    if (!in_file.is_open())
+    {
+        cout << "Couldn't open file: " << file_name << "." << endl;
+        return;
+    }
+
+    string line;
+
+    while (getline(in_file, line))
+    {
+        file_text += line;
+    }
+
+    in_file.close();
 }
 
 /**

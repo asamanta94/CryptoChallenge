@@ -19,4 +19,6 @@ unsigned long long _hamming_distance(uint8_t * arr_1, size_t len_1, uint8_t * ar
 
 unsigned int _hamming_distance_str(string& str1, string& str2);
 
+void _read_file(char * file_name, string &file_text);
+
 #endif
