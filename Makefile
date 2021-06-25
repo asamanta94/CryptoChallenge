@@ -30,8 +30,8 @@ c5: dir common.cpp repeat_key_xor.cpp c5.cpp
 c6_hamm: dir common.cpp hamming_distance.cpp c6_hamm.cpp
 	$(CC) $(CFLAGS) -o $(OUT_DIR)/c6_hamm common.cpp hamming_distance.cpp c6_hamm.cpp
 
-c6: dir common.cpp base64_to_hex.cpp c6.cpp
-	$(CC) -o $(OUT_DIR)/c6 common.cpp hamming_distance.cpp base64_to_hex.cpp c6.cpp
+c6: dir common.cpp base64_to_hex.cpp single_byte_xor.cpp c6.cpp
+	$(CC) -o $(OUT_DIR)/c6 common.cpp single_byte_xor.cpp base64_to_hex.cpp c6.cpp
 
 test: dir common.cpp test_common.cpp
 	$(CC) -o $(OUT_DIR)/test common.cpp test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)

@@ -148,3 +148,102 @@ void _hex_to_bytes(char * hex_str, uint8_t * bytes)
     }
 }
 
+/**
+ * Return the Hamming / Edit distance between 2 byte arrays.
+ */
+unsigned long long _hamming_distance(uint8_t * arr_1, size_t len_1, uint8_t * arr_2, size_t len_2)
+{
+    int max_length = (len_1 >= len_2) ? len_1 : len_2;
+
+    uint8_t * byte_1 = arr_1;
+    uint8_t * byte_2 = arr_2;
+    uint8_t temp = 0;
+
+    unsigned long long hamming_distance = 0;
+
+    for (int i = 0; i < max_length; i++)
+    {
+        temp = 0;
+
+        if (max_length == len_1 && i > len_2)
+        {
+            temp = (*byte_1) ^ 0;
+        }
+        else if (max_length == len_2 && i > len_1)
+        {
+            temp = (*byte_2) ^ 0;
+        }
+        else
+        {
+            temp = (*byte_1) ^ (*byte_2);
+        }
+
+        for (int j = 0; j < 8; j++)
+        {
+            hamming_distance += (((temp >> j) & 0x01) == 1) ? 1 : 0;
+        }
+
+        if (i < len_1)
+            byte_1++;
+        if (i < len_2)
+            byte_2++;
+    }
+
+    return hamming_distance;
+}
+
+unsigned int _hamming_distance_str(string& str1, string& str2)
+{
+    char str1_c;
+    char str2_c;
+    char temp = 0;
+
+    unsigned int hamming_distance = 0;
+    int max_length = (str1.length() >= str2.length()) ? str1.length() : str2.length();
+
+    // Assuming str1 & str2 are of the same length
+    for (int i = 0; i < max_length; i++)
+    {
+        str1_c = str1[i];
+        str2_c = str2[i];
+        temp = 0;
+
+        if (max_length == str1.length() && i > str2.length())
+        {
+            temp = (str1_c) ^ 0;
+        }
+        else if (max_length == str2.length() && i > str1.length())
+        {
+            temp = (str2_c) ^ 0;
+        }
+        else
+        {
+            temp = str1_c ^ str2_c;
+        }
+
+        for (int j = 0; j < 8; j++)
+        {
+            hamming_distance += (((temp >> j) & 0x01) == 1) ? 1 : 0;
+        }
+    }
+
+    return hamming_distance;
+}
+
+/**
+ * Print a set of bytes to console.
+ */
+void _print_bytes(uint8_t * arr, size_t len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if ((i + 1) == len)
+        {
+            printf("0x%x\n", arr[i]);
+        }
+        else
+        {
+            printf("0x%x, ", arr[i]);
+        }
+    }
+}

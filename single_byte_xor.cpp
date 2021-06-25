@@ -149,19 +149,7 @@ void expected_count(double * arr, int len)
     }
 }
 
-double chi_squared(double * expt_arr, unsigned int * actual_arr)
-{
-    double chi = 0;
-
-    for (int i = 0; i < 26; i++)
-    {
-        chi += (pow(expt_arr[i] - actual_arr[i], 2) / expt_arr[i]);
-    }
-
-    return chi;
-}
-
-unsigned long long decode(char * hex_str, char * answer)
+unsigned long long decode(char * hex_str, char * answer, char * key)
 {
     map<char, unsigned long long> freq;
 
@@ -203,10 +191,6 @@ unsigned long long decode(char * hex_str, char * answer)
 
     decoded_str[(hex_str_len / 2)] = '\0';
 
-    double * expt = new double[26];
-    double min_chi = numeric_limits<double>::max();
-    double curr_chi = 0;
-
     unsigned long long score = 0;
     unsigned long long max_score = 0;
 
@@ -214,23 +198,6 @@ unsigned long long decode(char * hex_str, char * answer)
     {
         hex_decode(byte_arr, hex_str_len / 2, i, decoded_bytes);
         decode_hex(decoded_bytes, hex_str_len / 2, decoded_str);
-        // for (int j = 0; j < 26; j++)
-        // {
-        //     count_arr[j] = 0;
-        //     expt[j] = 0.0;
-        // }
-        //
-        // int ignored = char_count(decoded_str, count_arr);
-        // expected_count(expt, (hex_str_len / 2));
-        // curr_chi = chi_squared(expt, count_arr);
-        //
-        // cout << i << " " << curr_chi << " " << decoded_str << endl;
-        //
-        // if (curr_chi < min_chi)
-        // {
-        //     min_chi = curr_chi;
-        //     strcpy(answer, decoded_str);
-        // }
 
         score = 0;
 
@@ -255,6 +222,7 @@ unsigned long long decode(char * hex_str, char * answer)
         if (score > max_score)
         {
             max_score = score;
+            *key = i;
             strcpy(answer, decoded_str);
         }
     }

@@ -13,4 +13,10 @@ void _ascii_to_hex(string& char_str, string& hex_str);
 
 void _hex_to_bytes(char * hex_str, uint8_t * bytes);
 
+void _print_bytes(uint8_t * arr, size_t len);
+
+unsigned long long _hamming_distance(uint8_t * arr_1, size_t len_1, uint8_t * arr_2, size_t len_2);
+
+unsigned int _hamming_distance_str(string& str1, string& str2);
+
 #endif

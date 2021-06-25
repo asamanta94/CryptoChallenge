@@ -145,6 +145,49 @@ TEST(CommonTestGroup, HexToBytesTest)
     delete[] actual_bytes;
 }
 
+TEST(CommonTestGroup, HammingDistanceTest)
+{
+    string str_1 = "this is a test";
+    string str_2 = "wokka wokka!!!";
+
+    uint8_t * b_1 = new uint8_t[str_1.length()];
+    uint8_t * b_2 = new uint8_t[str_2.length()];
+
+    memcpy(b_1, (char *)str_1.c_str(), str_1.length());
+    memcpy(b_2, (char *)str_2.c_str(), str_2.length());
+
+    // Same data should have no edits
+    CHECK_EQUAL(0, _hamming_distance(b_1, str_1.length(), b_1, str_1.length()));
+
+    // From Cryptopals Challenge 6
+    CHECK_EQUAL(37, _hamming_distance(b_1, str_1.length(), b_2, str_2.length()));
+
+    // Set alternating bytes.
+    b_1[0] = 0x00;
+    b_2[0] = 0xff;
+
+    for (int i = 1; i < str_1.length(); i++)
+    {
+        b_1[i] = ~b_1[i - 1];
+        b_2[i] = ~b_2[i - 1];
+    }
+
+    // All the bytes should be different.
+    CHECK_EQUAL(8 * str_1.length(), _hamming_distance(b_1, str_1.length(), b_2, str_2.length()));
+
+    delete[] b_1;
+    delete[] b_2;
+}
+
+TEST(CommonTestGroup, HammingDistanceStrTest)
+{
+    string str_1 = "this is a test";
+    string str_2 = "wokka wokka!!!";
+
+    // From Cryptopals Challenge 6
+    CHECK_EQUAL(37, _hamming_distance_str(str_1, str_2));
+}
+
 int main(int ac, char** av)
 {
     return CommandLineTestRunner::RunAllTests(ac, av);
