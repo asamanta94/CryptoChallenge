@@ -21,4 +21,8 @@ unsigned int _hamming_distance_str(string& str1, string& str2);
 
 void _read_file(char * file_name, string &file_text);
 
+void _base64_to_hex(string& base64_string, string &hex_string);
+
+unsigned int _base64_to_int(char c);
+
 #endif

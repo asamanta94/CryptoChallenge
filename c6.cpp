@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <map>
 #include <limits>
+
 #include "single_byte_xor.h"
-#include "base64_to_hex.h"
 #include "common.h"
 
 #define DEBUG 0
@@ -88,7 +88,7 @@ int main(int argc, char * argv[])
     _read_file((char *) "6.txt", base64_string);
 
     // Convert text from base64 to hex
-    base64_to_hex(base64_string, hex_string);
+    _base64_to_hex(base64_string, hex_string);
 
     // Convert hex string to ASCII string
     _hex_to_ascii(hex_string, ascii_string);
