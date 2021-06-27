@@ -33,6 +33,9 @@ c6: dir common.cpp single_byte_xor.cpp c6.cpp
 c7: dir common.cpp c7.cpp
 	$(CC) -o $(OUT_DIR)/c7 common.cpp c7.cpp $(OPENSSL_CPP_INCLUDE) $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
+c8: dir common.cpp c8.cpp
+	$(CC) -o $(OUT_DIR)/c8 common.cpp c8.cpp
+
 test: dir common.cpp test_common.cpp
 	$(CC) -o $(OUT_DIR)/test common.cpp test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
 
