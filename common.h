@@ -23,6 +23,8 @@ void _read_file(char * file_name, string &file_text);
 
 void _base64_to_hex(string& base64_string, string &hex_string);
 
+char * _hex_to_base64(char * text);
+
 unsigned int _base64_to_int(char c);
 
 #endif

@@ -12,35 +12,6 @@
 
 using namespace std;
 
-float char_freq_table[26] = {
-    0.082,
-    0.015,
-    0.028,
-    0.043,
-    0.13,
-    0.022,
-    0.02,
-    0.061,
-    0.7,
-    0.0015,
-    0.0077,
-    0.04,
-    0.024,
-    0.067,
-    0.075,
-    0.019,
-    0.00095,
-    0.06,
-    0.063,
-    0.091,
-    0.028,
-    0.0098,
-    0.024,
-    0.0015,
-    0.02,
-    0.00074
-};
-
 /**
  * Single byte XOR decode.
  */
@@ -73,27 +44,6 @@ uint8_t * hex_str_to_bytes(char * hex_str, unsigned int len)
     }
 
     return arr;
-}
-
-static inline float count_likelihood(char * arr, unsigned int len)
-{
-    float s = 0;
-    int k = 0;
-
-    for (int i = 0; i < len; i++)
-    {
-        k = (int) arr[i];
-        if (k >= 65 && k <= 90)
-        {
-            s += char_freq_table[k + 32 - 97];
-        }
-        else if (k >= 97 && k <= 122)
-        {
-            s += char_freq_table[k - 97];
-        }
-    }
-
-    return s;
 }
 
 static inline void decode_hex(uint8_t * arr, unsigned int len, char * str)
@@ -139,14 +89,6 @@ int char_count(char * str, unsigned int * count_arr)
     cout << endl;
 
     return ignored;
-}
-
-void expected_count(double * arr, int len)
-{
-    for (int i = 0; i < 26; i++)
-    {
-        arr[i] = len * ((double) char_freq_table[i]);
-    }
 }
 
 unsigned long long decode(char * hex_str, char * answer, char * key)

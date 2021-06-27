@@ -12,11 +12,11 @@ CPPUTEST_LD_LIBRARIES=-L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 dir:
 	if [ ! -d "./out/" ]; then mkdir $(OUT_DIR); fi
 
-h2b64: dir common.cpp hex_to_base64.cpp
-	$(CC) -o $(OUT_DIR)/h2b64 common.cpp hex_to_base64.cpp
+c1: dir common.cpp c1.cpp
+	$(CC) -o $(OUT_DIR)/c1 common.cpp c1.cpp
 
-fxor: dir common.cpp fixed_xor.cpp fixed_xor_run.cpp
-	$(CC) -o $(OUT_DIR)/fxor common.cpp fixed_xor.cpp fixed_xor_run.cpp
+c2: dir common.cpp c2.cpp
+	$(CC) -o $(OUT_DIR)/c2 common.cpp c2.cpp
 
 c3: dir common.cpp single_byte_xor.cpp c3.cpp
 	$(CC) -o $(OUT_DIR)/c3 common.cpp single_byte_xor.cpp c3.cpp
@@ -24,8 +24,8 @@ c3: dir common.cpp single_byte_xor.cpp c3.cpp
 c4: dir common.cpp single_byte_xor.cpp c4.cpp
 	$(CC) -o $(OUT_DIR)/c4 common.cpp single_byte_xor.cpp c4.cpp
 
-c5: dir common.cpp repeat_key_xor.cpp c5.cpp
-	$(CC) $(CFLAGS) -o $(OUT_DIR)/c5 common.cpp repeat_key_xor.cpp c5.cpp
+c5: dir common.cpp c5.cpp
+	$(CC) $(CFLAGS) -o $(OUT_DIR)/c5 common.cpp c5.cpp
 
 c6: dir common.cpp single_byte_xor.cpp c6.cpp
 	$(CC) -o $(OUT_DIR)/c6 common.cpp single_byte_xor.cpp c6.cpp

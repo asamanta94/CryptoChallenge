@@ -7,7 +7,8 @@ using namespace std;
 int main(int argc, char * argv[])
 {
     char * answer = new char[strlen(argv[1]) / 2];
-    decode((char *) argv[1], answer);
-    cout << answer << endl;
+    char key = 0;
+    decode((char *) argv[1], answer, &key);
+    cout << "Text: " << answer << endl;
     return 0;
 }

@@ -1,20 +1,20 @@
 #include <iostream>
 
-#include "fixed_xor.h"
+#include "common.h"
 
 using namespace std;
 
-char usage[] = "./out/fxor <s1> <s2>";
+char usage[] = "./out/c1 <hex string>";
 
 int main(int argc, char * argv[])
 {
-    if (argc != 3)
+    if (argc != 2)
     {
         cout << usage << endl;
         return -1;
     }
 
-    cout << fixed_xor(argv[1], argv[2]) << endl;
+    cout << _hex_to_base64(argv[1]) << endl;
 
     return 0;
 }
