@@ -36,6 +36,9 @@ c7: dir common.cpp c7.cpp
 c8: dir common.cpp c8.cpp
 	$(CC) -o $(OUT_DIR)/c8 common.cpp c8.cpp
 
+c9: dir common.cpp c9.cpp
+	$(CC) -o $(OUT_DIR)/c9 common.cpp c9.cpp
+
 test: dir common.cpp test_common.cpp
 	$(CC) -o $(OUT_DIR)/test common.cpp test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
 
