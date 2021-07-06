@@ -39,11 +39,12 @@ c8: dir common.cpp c8.cpp
 c9: dir common.cpp crypto_func.cpp c9.cpp
 	$(CC) -o $(OUT_DIR)/c9 common.cpp crypto_func.cpp c9.cpp
 
-c9: dir common.cpp crypto_func.cpp c10.cpp
+c10: dir common.cpp crypto_func.cpp c10.cpp
 	$(CC) -o $(OUT_DIR)/c9 common.cpp crypto_func.cpp c10.cpp
 
-test: dir common.cpp test_common.cpp
+test: dir common.cpp test_common.cpp test_challenges.cpp
 	$(CC) -o $(OUT_DIR)/test common.cpp test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
+	$(CC) -o $(OUT_DIR)/test_2 common.cpp crypto_func.cpp test_challenges.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
 
 clean:
 	rm -rf $(OUT_DIR)/*

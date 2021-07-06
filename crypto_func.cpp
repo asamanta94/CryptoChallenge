@@ -15,14 +15,13 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 		return block;
 	}
 
-	block = static_cast<uint8_t *>(realloc(block, specified_block_length));
+	uint8_t * padded_block = new uint8_t[specified_block_length];
+
+	memcpy(padded_block, block, block_length);
 
 	uint8_t padded_byte = specified_block_length - block_length;
 
-	for (int i = block_length; i < specified_block_length; i++)
-	{
-		*(block + i) = padded_byte;
-	}
+	memset(padded_block + block_length, padded_byte, padded_byte);
 
-	return block;
+	return padded_block;
 }
