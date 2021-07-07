@@ -32,7 +32,7 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 	return padded_block;
 }
 
-void ecb_decrypt(string& ascii_string, unsigned char * key, unsigned char * plaintext, int * plaintext_len)
+void ecb_decrypt(char * ciphertext, unsigned char * key, unsigned char * plaintext, int * plaintext_len)
 {
     int len = 0;
 
@@ -47,7 +47,7 @@ void ecb_decrypt(string& ascii_string, unsigned char * key, unsigned char * plai
         cout << "Couldn't initialize for decryption" << endl;
 
     // Decrypt text
-    if(EVP_DecryptUpdate(ctx, plaintext, &len, (unsigned char *)ascii_string.c_str(), ascii_string.length()) != 1)
+    if(EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext, strlen(ciphertext)) != 1)
         cout << "Couldn't decrypt" << endl;
     *plaintext_len = len;
 
@@ -58,6 +58,38 @@ void ecb_decrypt(string& ascii_string, unsigned char * key, unsigned char * plai
 
     // Free memory
     EVP_CIPHER_CTX_free(ctx);
+}
+
+int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * key, unsigned char * iv, unsigned char * ciphertext)
+{
+	EVP_CIPHER_CTX *ctx;
+
+	int len;
+
+	int ciphertext_len;
+
+	// Create and initialize the context
+	if(!(ctx = EVP_CIPHER_CTX_new()))
+	    cout << "Couldn't create context" << endl;
+
+	// Encryption Initialization
+	if(EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, key, iv) != 1)
+	    cout << "Couldn't initialize for encryption" << endl;
+
+	// Encrypt text
+	if(EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len) != 1)
+	    cout << "Couldn't encrypt" << endl;
+	ciphertext_len = len;
+
+	// Finalize encryption
+	if(EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1)
+		cout << "Couldn't finalize encryption" << endl;
+	ciphertext_len += len;
+
+	// Clean up
+	EVP_CIPHER_CTX_free(ctx);
+
+	return ciphertext_len;
 }
 
 void cbc(string& text, string& key)

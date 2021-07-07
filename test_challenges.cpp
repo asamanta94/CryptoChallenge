@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <string>
 
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/CommandLineTestRunner.h"
@@ -54,6 +55,28 @@ TEST(ChallengeTestGroup, TEST_C9)
 	delete[] bytes_padded;
 
 	delete[] bytes;
+}
+
+/**
+ * Test ECB mode encryption and decryption.
+ */
+TEST(ChallengeTestGroup, TEST_ENCRYPT)
+{
+	char * plaintext = (char *) "The quick brown fox jumps over the lazy dog";
+	unsigned char * key = (unsigned char *) "key";
+	unsigned char * ciphertext = new unsigned char[strlen(plaintext)];
+
+	int len = 0;
+
+	int ciphertext_len = ecb_encrypt((unsigned char *) plaintext, strlen(plaintext), key, NULL, ciphertext);
+
+	cout << ciphertext << endl;
+
+	unsigned char * pt = new unsigned char[strlen(plaintext)];
+
+	ecb_decrypt((char *) ciphertext, key, pt, &len);
+
+	delete[] ciphertext;
 }
 
 int main(int argc, const char * argv[])

@@ -37,7 +37,8 @@ c6: dir common single_byte_xor.cpp c6.cpp
 	$(CC) -o $(OUT_DIR)/c6 $(OUT_DIR)/common single_byte_xor.cpp c6.cpp
 
 c7: dir common crypto_func c7.cpp
-	$(CC) -o $(OUT_DIR)/c7 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c7.cpp $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
+	$(CC) -o $(OUT_DIR)/c7 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c7.cpp \
+		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 c8: dir common c8.cpp
 	$(CC) -o $(OUT_DIR)/c8 $(OUT_DIR)/common c8.cpp
@@ -49,8 +50,10 @@ c10: dir common crypto_func c10.cpp
 	$(CC) -o $(OUT_DIR)/c10 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c10.cpp
 
 test: dir common crypto_func test_common.cpp test_challenges.cpp
-	$(CC) -o $(OUT_DIR)/test $(OUT_DIR)/common test_common.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
-	$(CC) -o $(OUT_DIR)/test_2 $(OUT_DIR)/common $(OUT_DIR)/crypto_func test_challenges.cpp $(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
+	$(CC) -o $(OUT_DIR)/test $(OUT_DIR)/common test_common.cpp \
+		$(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
+	$(CC) -o $(OUT_DIR)/test_2 $(OUT_DIR)/common $(OUT_DIR)/crypto_func test_challenges.cpp \
+		$(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES) $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 clean:
 	rm -rf $(OUT_DIR)/*

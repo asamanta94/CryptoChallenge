@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
     plaintext = new unsigned char[ascii_string.length()];
 
     // Decrypt
-    ecb_decrypt(ascii_string, key, plaintext, &plaintext_len);
+    ecb_decrypt((char *) ascii_string.c_str(), key, plaintext, &plaintext_len);
 
     cout << plaintext << endl;
 
