@@ -16,7 +16,7 @@ common: dir common.cpp
 	$(CC) -c common.cpp -o $(OUT_DIR)/common
 
 crypto_func: dir crypto_func.cpp
-	$(CC) -c crypto_func.cpp -o $(OUT_DIR)/crypto_func
+	$(CC) -c crypto_func.cpp -o $(OUT_DIR)/crypto_func $(OPENSSL_CPP_INCLUDE)
 
 c1: dir common c1.cpp
 	$(CC) -o $(OUT_DIR)/c1 $(OUT_DIR)/common c1.cpp
@@ -36,8 +36,8 @@ c5: dir common c5.cpp
 c6: dir common single_byte_xor.cpp c6.cpp
 	$(CC) -o $(OUT_DIR)/c6 $(OUT_DIR)/common single_byte_xor.cpp c6.cpp
 
-c7: dir common c7.cpp
-	$(CC) -o $(OUT_DIR)/c7 $(OUT_DIR)/common c7.cpp $(OPENSSL_CPP_INCLUDE) $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
+c7: dir common crypto_func c7.cpp
+	$(CC) -o $(OUT_DIR)/c7 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c7.cpp $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 c8: dir common c8.cpp
 	$(CC) -o $(OUT_DIR)/c8 $(OUT_DIR)/common c8.cpp
