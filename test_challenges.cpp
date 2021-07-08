@@ -72,9 +72,11 @@ TEST(ChallengeTestGroup, TEST_ENCRYPT)
 
 	cout << ciphertext << endl;
 
-	unsigned char * pt = new unsigned char[strlen(plaintext)];
+	unsigned char * pt = new unsigned char[ciphertext_len];
 
-	ecb_decrypt((char *) ciphertext, key, pt, &len);
+	ecb_decrypt((char *) ciphertext, ciphertext_len, key, pt, &len);
+
+	cout << pt << endl;
 
 	delete[] ciphertext;
 }

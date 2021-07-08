@@ -32,28 +32,45 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 	return padded_block;
 }
 
-void ecb_decrypt(char * ciphertext, unsigned char * key, unsigned char * plaintext, int * plaintext_len)
+void _handle_errors(void)
+{
+    ERR_print_errors_fp(stderr);
+    abort();
+}
+
+void ecb_decrypt(char * ciphertext, int ciphertext_len, unsigned char * key, unsigned char * plaintext, int * plaintext_len)
 {
     int len = 0;
 
 	EVP_CIPHER_CTX *ctx;
 
 	// Create and initialize the context
-    if(!(ctx = EVP_CIPHER_CTX_new()))
+    if(!(ctx = EVP_CIPHER_CTX_new())) {
+    	_handle_errors();
         cout << "Couldn't create context" << endl;
+    }
 
     // Decryption Initialization
     if(EVP_DecryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, key, NULL) != 1)
+    {
+    	_handle_errors();
         cout << "Couldn't initialize for decryption" << endl;
+    }
 
     // Decrypt text
-    if(EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext, strlen(ciphertext)) != 1)
+    if(EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext, ciphertext_len) != 1)
+    {
+    	_handle_errors();
         cout << "Couldn't decrypt" << endl;
+    }
     *plaintext_len = len;
 
     // Finalize Decryption
-    if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len))
+    if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
+    {
+    	_handle_errors();
         cout << "Couldn't finalize decryption" << endl;
+    }
     *plaintext_len += len;
 
     // Free memory
@@ -70,20 +87,32 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 
 	// Create and initialize the context
 	if(!(ctx = EVP_CIPHER_CTX_new()))
+	{
+		_handle_errors();
 	    cout << "Couldn't create context" << endl;
+	}
 
 	// Encryption Initialization
-	if(EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, key, iv) != 1)
+	if(EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, key, NULL) != 1)
+	{
+		_handle_errors();
 	    cout << "Couldn't initialize for encryption" << endl;
+	}
 
 	// Encrypt text
 	if(EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len) != 1)
+	{
+		_handle_errors();
 	    cout << "Couldn't encrypt" << endl;
+	}
 	ciphertext_len = len;
 
 	// Finalize encryption
 	if(EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1)
+	{
+		_handle_errors();
 		cout << "Couldn't finalize encryption" << endl;
+	}
 	ciphertext_len += len;
 
 	// Clean up
