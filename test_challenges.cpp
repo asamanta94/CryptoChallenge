@@ -34,6 +34,9 @@ uint8_t TEST_BYTES[] = {
 	0x04
 };
 
+string TEST_PLAINTEXT = "The quick brown fox jumps over the lazy dog";
+string TEST_KEY = "key";
+
 TEST_GROUP(ChallengeTestGroup)
 {
 
@@ -62,24 +65,26 @@ TEST(ChallengeTestGroup, TEST_C9)
  */
 TEST(ChallengeTestGroup, TEST_ENCRYPT)
 {
-	unsigned char * plaintext = (unsigned char *) "The quick brown fox jumps over the lazy dog";
-	unsigned char * key = (unsigned char *) "key";
-	unsigned char * ciphertext = new unsigned char[strlen((char *) plaintext)];
+	unsigned char * ciphertext = new unsigned char[TEST_PLAINTEXT.length()];
 
 	int len = 0;
 
-	int ciphertext_len = ecb_encrypt(plaintext, strlen((char *) plaintext), key, NULL, ciphertext);
+	int ciphertext_len = ecb_encrypt((unsigned char *) TEST_PLAINTEXT.c_str(),
+		TEST_PLAINTEXT.size(), (unsigned char *) TEST_KEY.c_str(), NULL, ciphertext);
+
+	cout << strlen((char *) ciphertext) << " " << ciphertext_len << endl;
 
 	unsigned char * pt = new unsigned char[ciphertext_len];
 
-	ecb_decrypt((char *) ciphertext, ciphertext_len, key, pt, &len);
+	ecb_decrypt((char *) ciphertext, ciphertext_len, (unsigned char *) TEST_KEY.c_str(), pt, &len);
 
 	// Have to append the NULL character because OpenSSL won't do it automatically.
 	*(pt + len) = '\0';
 
-	MEMCMP_EQUAL(plaintext, pt, len);
+	MEMCMP_EQUAL(TEST_PLAINTEXT.c_str(), pt, len);
 
-	// delete[] ciphertext;
+	delete[] pt;
+	delete[] ciphertext;
 }
 
 int main(int argc, const char * argv[])
