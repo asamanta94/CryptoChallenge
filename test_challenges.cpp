@@ -62,23 +62,24 @@ TEST(ChallengeTestGroup, TEST_C9)
  */
 TEST(ChallengeTestGroup, TEST_ENCRYPT)
 {
-	char * plaintext = (char *) "The quick brown fox jumps over the lazy dog";
+	unsigned char * plaintext = (unsigned char *) "The quick brown fox jumps over the lazy dog";
 	unsigned char * key = (unsigned char *) "key";
-	unsigned char * ciphertext = new unsigned char[strlen(plaintext)];
+	unsigned char * ciphertext = new unsigned char[strlen((char *) plaintext)];
 
 	int len = 0;
 
-	int ciphertext_len = ecb_encrypt((unsigned char *) plaintext, strlen(plaintext), key, NULL, ciphertext);
-
-	cout << ciphertext << endl;
+	int ciphertext_len = ecb_encrypt(plaintext, strlen((char *) plaintext), key, NULL, ciphertext);
 
 	unsigned char * pt = new unsigned char[ciphertext_len];
 
 	ecb_decrypt((char *) ciphertext, ciphertext_len, key, pt, &len);
 
-	cout << pt << endl;
+	// Have to append the NULL character because OpenSSL won't do it automatically.
+	*(pt + len) = '\0';
 
-	delete[] ciphertext;
+	MEMCMP_EQUAL(plaintext, pt, len);
+
+	// delete[] ciphertext;
 }
 
 int main(int argc, const char * argv[])
