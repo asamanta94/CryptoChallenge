@@ -72,11 +72,9 @@ TEST(ChallengeTestGroup, TEST_ENCRYPT)
 	int ciphertext_len = ecb_encrypt((unsigned char *) TEST_PLAINTEXT.c_str(),
 		TEST_PLAINTEXT.size(), (unsigned char *) TEST_KEY.c_str(), NULL, ciphertext);
 
-	cout << strlen((char *) ciphertext) << " " << ciphertext_len << endl;
-
 	unsigned char * pt = new unsigned char[ciphertext_len];
 
-	ecb_decrypt((char *) ciphertext, ciphertext_len, (unsigned char *) TEST_KEY.c_str(), pt, &len);
+	len = ecb_decrypt(ciphertext, ciphertext_len, (unsigned char *) TEST_KEY.c_str(), NULL, pt);
 
 	// Have to append the NULL character because OpenSSL won't do it automatically.
 	*(pt + len) = '\0';
