@@ -33,13 +33,15 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 	return padded_block;
 }
 
-unsigned char * pkcs7_padding(unsigned char * block, unsigned int block_length)
+unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, unsigned char * padded_block)
 {
-	unsigned int remaining_bytes = block_length % AES_BLOCK_SIZE;
+	unsigned int mod = (block_length % AES_BLOCK_SIZE);
 
-	unsigned int len = (remaining_bytes == 0) ? (block_length + AES_BLOCK_SIZE) : block_length;
+	unsigned int len = (mod == 0) ? (block_length + AES_BLOCK_SIZE) : (block_length + AES_BLOCK_SIZE - mod);
 
-	return (unsigned char *) add_padding((uint8_t *) block, block_length, len);
+	padded_block = add_padding((uint8_t *) block, block_length, len);
+
+	return len;
 }
 
 void _handle_errors(void)
@@ -140,7 +142,25 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 
 void cbc_encrypt(string& text, string& key)
 {
-	char * plaintext = (char *) text.c_str();
+	unsigned char * plaintext_padded = NULL;
 
-	unsigned char * mem = new unsigned char[text.size()];
+	// Pad plaintext because OpenSSL AES uses PKCS padding and a block size of 16 bytes
+	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) text.c_str(), text.size(), plaintext_padded);
+
+	unsigned char * ptr = plaintext_padded;
+
+	for (int i = 0; i < (plaintext_padded_len % AES_BLOCK_SIZE); i++)
+	{
+		// Get next plaintext block of 16 bytes
+
+		// XOR previous ciphertext block to current plaintext block
+
+		// Encrypt block
+
+		// Save current ciphertext block as previous ciphertext block
+
+		// Append ciphertext block to ciphertext
+	}
+
+	delete[] plaintext_padded;
 }

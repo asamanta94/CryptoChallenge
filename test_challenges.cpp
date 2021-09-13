@@ -85,6 +85,11 @@ TEST(ChallengeTestGroup, TEST_ENCRYPT)
 	delete[] ciphertext;
 }
 
+TEST(ChallengeTestGroup, TEST_CBC_ENCRYPT)
+{
+	cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
+}
+
 int main(int argc, const char * argv[])
 {
 	return CommandLineTestRunner::RunAllTests(argc, argv);
