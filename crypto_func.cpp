@@ -4,6 +4,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/aes.h>
 
 #include "crypto_func.h"
 
@@ -16,7 +17,7 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 		return NULL;
 	}
 
-	if (block_length >= specified_block_length)
+	if (block_length > specified_block_length)
 	{
 		return block;
 	}
@@ -30,6 +31,15 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 	memset(padded_block + block_length, padded_byte, padded_byte);
 
 	return padded_block;
+}
+
+unsigned char * pkcs7_padding(unsigned char * block, unsigned int block_length)
+{
+	unsigned int remaining_bytes = block_length % AES_BLOCK_SIZE;
+
+	unsigned int len = (remaining_bytes == 0) ? (block_length + AES_BLOCK_SIZE) : block_length;
+
+	return (unsigned char *) add_padding((uint8_t *) block, block_length, len);
 }
 
 void _handle_errors(void)
@@ -59,12 +69,16 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
 
     // Decrypt text
-    if(EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext, ciphertext_len) != 1)
+    if(EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len) != 1)
     {
     	_handle_errors();
         cout << "Couldn't decrypt" << endl;
     }
     plaintext_len = len;
+
+    cout << "PT: " << plaintext << endl;
+    cout << "LEN: " << plaintext_len << endl;
+    cout << "LEN2: " << strlen((char *)plaintext) << endl;
 
     // Finalize Decryption
     if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
@@ -124,7 +138,9 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	return ciphertext_len;
 }
 
-void cbc(string& text, string& key)
+void cbc_encrypt(string& text, string& key)
 {
+	char * plaintext = (char *) text.c_str();
 
+	unsigned char * mem = new unsigned char[text.size()];
 }
