@@ -5,7 +5,7 @@ using namespace std;
 
 uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int specified_block_length);
 
-unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, unsigned char * padded_block);
+unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, unsigned char ** padded_block);
 
 int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * key, unsigned char * iv, unsigned char * plaintext);
 

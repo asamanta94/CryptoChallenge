@@ -33,13 +33,13 @@ uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int s
 	return padded_block;
 }
 
-unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, unsigned char * padded_block)
+unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, unsigned char ** padded_block)
 {
 	unsigned int mod = (block_length % AES_BLOCK_SIZE);
 
 	unsigned int len = (mod == 0) ? (block_length + AES_BLOCK_SIZE) : (block_length + AES_BLOCK_SIZE - mod);
 
-	padded_block = (unsigned char *) add_padding((uint8_t *) block, block_length, len);
+	(*padded_block) = add_padding((uint8_t *) block, block_length, len);
 
 	return len;
 }
@@ -145,7 +145,7 @@ void cbc_encrypt(string& text, string& key)
 	unsigned char * plaintext_padded = NULL;
 
 	// Pad plaintext because OpenSSL AES uses PKCS padding and a block size of 16 bytes
-	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) text.c_str(), text.size(), plaintext_padded);
+	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) text.c_str(), text.size(), &plaintext_padded);
 
 	unsigned char * ptr = plaintext_padded;
 
