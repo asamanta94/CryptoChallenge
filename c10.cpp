@@ -2,8 +2,12 @@
 
 #include "common.h"
 #include "crypto_func.h"
+#include <openssl/aes.h>
 
 #define AES_BLOCK_SIZE_BYTES	16
+
+string TEST_PLAINTEXT = "The quick brown fox jumps over the lazy dog";
+string TEST_KEY = "key";
 
 int main(int argc, const char * argv[])
 {
@@ -27,23 +31,7 @@ int main(int argc, const char * argv[])
     	iv[i] = 0x0;
     }
 
-    int plaintext_len = 0;
-    unsigned char * pt = new unsigned char[AES_BLOCK_SIZE_BYTES];
-    unsigned char * key = new unsigned char[AES_BLOCK_SIZE_BYTES];
-    unsigned char * mem = new unsigned char[AES_BLOCK_SIZE_BYTES];
-
-    memcpy(key, "YELLOW SUBMARINE", AES_BLOCK_SIZE_BYTES);
-
-    for (int i = 0; i < AES_BLOCK_SIZE_BYTES; i++)
-    {
-    	mem[i] = ascii_string[i];
-    }
-
-    plaintext_len = ecb_decrypt(mem, strlen((char *)mem), key, NULL, pt);
-
-    delete[] iv;
-    delete[] mem;
-    delete[] pt;
+    cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
 
 	return 0;
 }

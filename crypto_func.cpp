@@ -39,7 +39,7 @@ unsigned int pkcs7_padding(unsigned char * block, unsigned int block_length, uns
 
 	unsigned int len = (mod == 0) ? (block_length + AES_BLOCK_SIZE) : (block_length + AES_BLOCK_SIZE - mod);
 
-	padded_block = add_padding((uint8_t *) block, block_length, len);
+	padded_block = (unsigned char *) add_padding((uint8_t *) block, block_length, len);
 
 	return len;
 }
@@ -149,17 +149,37 @@ void cbc_encrypt(string& text, string& key)
 
 	unsigned char * ptr = plaintext_padded;
 
-	for (int i = 0; i < (plaintext_padded_len % AES_BLOCK_SIZE); i++)
-	{
-		// Get next plaintext block of 16 bytes
+	unsigned char * xor_pt = new unsigned char[AES_BLOCK_SIZE];
 
+	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE];
+
+	for (int i = 0; i < AES_BLOCK_SIZE; i++)
+	{
+		prev_ciphertext[i] = 0;
+	}
+
+	unsigned char * ciphertext = new unsigned char[AES_BLOCK_SIZE];
+
+	for (int i = 0; i < (plaintext_padded_len / AES_BLOCK_SIZE); i++)
+	{
 		// XOR previous ciphertext block to current plaintext block
+		for (int j = 0; j < AES_BLOCK_SIZE; j++)
+		{
+			xor_pt[j] = ptr[j] ^ prev_ciphertext[j];
+		}
 
 		// Encrypt block
+		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), NULL, ciphertext);
 
 		// Save current ciphertext block as previous ciphertext block
+		memcpy(prev_ciphertext, ciphertext, AES_BLOCK_SIZE);
 
 		// Append ciphertext block to ciphertext
+		// TODO
+		cout << ciphertext << " " << len << endl;
+
+		// Increment pointer to next block
+		ptr += AES_BLOCK_SIZE;
 	}
 
 	delete[] plaintext_padded;
