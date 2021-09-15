@@ -155,17 +155,18 @@ void cbc_encrypt(string& text, string& key)
 
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
-		prev_ciphertext[i] = 0;
+		prev_ciphertext[i] = 0x0;
 	}
 
-	unsigned char * ciphertext = new unsigned char[AES_BLOCK_SIZE];
+	// Allocate a ciphertext length twize the size of AES_BLOCK_SIZE, because OpenSSL follows PKCS#7 padding
+	unsigned char * ciphertext = new unsigned char[AES_BLOCK_SIZE * 2];
 
 	for (int i = 0; i < (plaintext_padded_len / AES_BLOCK_SIZE); i++)
 	{
 		// XOR previous ciphertext block to current plaintext block
 		for (int j = 0; j < AES_BLOCK_SIZE; j++)
 		{
-			xor_pt[j] = ptr[j] ^ prev_ciphertext[j];
+			xor_pt[j] = plaintext_padded[j] ^ prev_ciphertext[j];
 		}
 
 		// Encrypt block
