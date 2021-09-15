@@ -153,13 +153,16 @@ void cbc_encrypt(string& text, string& key)
 
 	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE];
 
+	// Use initialization vector of all 0's
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
 		prev_ciphertext[i] = 0x0;
 	}
 
 	// Allocate a ciphertext length twize the size of AES_BLOCK_SIZE, because OpenSSL follows PKCS#7 padding
-	unsigned char * ciphertext = new unsigned char[AES_BLOCK_SIZE * 2];
+	unsigned char * ciphertext_block = new unsigned char[AES_BLOCK_SIZE * 2];
+
+	unsigned char * ciphertext = new unsigned char[plaintext_padded_len * 2];
 
 	for (int i = 0; i < (plaintext_padded_len / AES_BLOCK_SIZE); i++)
 	{
@@ -170,14 +173,13 @@ void cbc_encrypt(string& text, string& key)
 		}
 
 		// Encrypt block
-		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), NULL, ciphertext);
+		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), NULL, ciphertext_block);
 
 		// Save current ciphertext block as previous ciphertext block
-		memcpy(prev_ciphertext, ciphertext, AES_BLOCK_SIZE);
+		memcpy(prev_ciphertext, ciphertext_block, AES_BLOCK_SIZE);
 
 		// Append ciphertext block to ciphertext
-		// TODO
-		cout << ciphertext << " " << len << endl;
+		memcpy(ciphertext + (len * i), ciphertext_block, len);
 
 		// Increment pointer to next block
 		ptr += AES_BLOCK_SIZE;
