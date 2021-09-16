@@ -2,7 +2,6 @@
 
 #include "common.h"
 #include "crypto_func.h"
-#include <openssl/aes.h>
 
 #define AES_BLOCK_SIZE_BYTES	16
 

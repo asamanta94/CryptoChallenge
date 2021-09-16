@@ -78,9 +78,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
     plaintext_len = len;
 
-    cout << "PT: " << plaintext << endl;
-    cout << "LEN: " << plaintext_len << endl;
-    cout << "LEN2: " << strlen((char *)plaintext) << endl;
+    cout << plaintext << endl;
+    cout << plaintext_len << endl;
 
     // Finalize Decryption
     if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
@@ -89,6 +88,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
         cout << "Couldn't finalize decryption" << endl;
     }
     plaintext_len += len;
+
+    cout << "HERE" << endl;
 
     // Free memory
     EVP_CIPHER_CTX_free(ctx);
@@ -140,7 +141,17 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	return ciphertext_len;
 }
 
-void cbc_encrypt(string& text, string& key)
+void cbc_decrypt(unsigned char * ciphertext, int len, string& key)
+{
+	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
+
+	for (int i = 0; i < (len / (AES_BLOCK_SIZE * 2)); i++)
+	{
+		ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE * 2), AES_BLOCK_SIZE * 2, (unsigned char *) key.c_str(), NULL, plaintext);
+	}
+}
+
+unsigned char * cbc_encrypt(string& text, string& key)
 {
 	unsigned char * plaintext_padded = NULL;
 
@@ -186,4 +197,8 @@ void cbc_encrypt(string& text, string& key)
 	}
 
 	delete[] plaintext_padded;
+
+	cbc_decrypt(ciphertext, plaintext_padded_len * 2, key);
+
+	return ciphertext;
 }
