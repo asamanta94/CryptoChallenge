@@ -145,9 +145,23 @@ void cbc_decrypt(unsigned char * ciphertext, int len, string& key)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
 
+	unsigned char * iv = new unsigned char[AES_BLOCK_SIZE];
+	for (int i = 0; i < AES_BLOCK_SIZE; i++)
+	{
+		iv[i] = 0x0;
+	}
+
+
 	for (int i = 0; i < (len / (AES_BLOCK_SIZE * 2)); i++)
 	{
-		ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE * 2), AES_BLOCK_SIZE * 2, (unsigned char *) key.c_str(), NULL, plaintext);
+		int len = ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE * 2), AES_BLOCK_SIZE * 2, (unsigned char *) key.c_str(), iv, plaintext);
+
+		for (int j = 0; j < len; j++)
+		{
+			plaintext[j] = plaintext[j] ^ iv[j];
+		}
+
+		memcpy(iv, plaintext, len);
 	}
 }
 
@@ -175,6 +189,10 @@ unsigned char * cbc_encrypt(string& text, string& key)
 
 	unsigned char * ciphertext = new unsigned char[plaintext_padded_len * 2];
 
+	unsigned char * cptr = ciphertext;
+
+	int clen = 0;
+
 	for (int i = 0; i < (plaintext_padded_len / AES_BLOCK_SIZE); i++)
 	{
 		// XOR previous ciphertext block to current plaintext block
@@ -190,15 +208,18 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		memcpy(prev_ciphertext, ciphertext_block, AES_BLOCK_SIZE);
 
 		// Append ciphertext block to ciphertext
-		memcpy(ciphertext + (len * i), ciphertext_block, len);
+		memcpy(cptr, ciphertext_block, len);
 
 		// Increment pointer to next block
 		ptr += AES_BLOCK_SIZE;
+
+		cptr += len;
+		clen += len;
 	}
 
 	delete[] plaintext_padded;
 
-	cbc_decrypt(ciphertext, plaintext_padded_len * 2, key);
+	cbc_decrypt(ciphertext, clen, key);
 
 	return ciphertext;
 }
