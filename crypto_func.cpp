@@ -78,9 +78,6 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
     plaintext_len = len;
 
-    cout << plaintext << endl;
-    cout << plaintext_len << endl;
-
     // Finalize Decryption
     if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
     {
@@ -89,6 +86,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
     plaintext_len += len;
 
+    cout << plaintext << endl;
+    cout << plaintext_len << endl;
     cout << "HERE" << endl;
 
     // Free memory
@@ -141,7 +140,7 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	return ciphertext_len;
 }
 
-void cbc_decrypt(unsigned char * ciphertext, int len, string& key)
+void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
 
@@ -152,7 +151,7 @@ void cbc_decrypt(unsigned char * ciphertext, int len, string& key)
 	}
 
 
-	for (int i = 0; i < (len / (AES_BLOCK_SIZE * 2)); i++)
+	for (int i = 0; i < (clen / (AES_BLOCK_SIZE * 2)); i++)
 	{
 		int len = ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE * 2), AES_BLOCK_SIZE * 2, (unsigned char *) key.c_str(), iv, plaintext);
 
@@ -198,7 +197,7 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		// XOR previous ciphertext block to current plaintext block
 		for (int j = 0; j < AES_BLOCK_SIZE; j++)
 		{
-			xor_pt[j] = plaintext_padded[j] ^ prev_ciphertext[j];
+			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)] ^ prev_ciphertext[j];
 		}
 
 		// Encrypt block
