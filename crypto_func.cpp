@@ -88,7 +88,6 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
 
     cout << plaintext << endl;
     cout << plaintext_len << endl;
-    cout << "HERE" << endl;
 
     // Free memory
     EVP_CIPHER_CTX_free(ctx);
@@ -175,10 +174,10 @@ unsigned char * cbc_encrypt(string& text, string& key)
 
 	unsigned char * xor_pt = new unsigned char[AES_BLOCK_SIZE];
 
-	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE];
+	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE * 2];
 
 	// Use initialization vector of all 0's
-	for (int i = 0; i < AES_BLOCK_SIZE; i++)
+	for (int i = 0; i < (AES_BLOCK_SIZE * 2); i++)
 	{
 		prev_ciphertext[i] = 0x0;
 	}
@@ -197,14 +196,14 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		// XOR previous ciphertext block to current plaintext block
 		for (int j = 0; j < AES_BLOCK_SIZE; j++)
 		{
-			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)] ^ prev_ciphertext[j];
+			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)];
 		}
 
 		// Encrypt block
-		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), NULL, ciphertext_block);
+		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), prev_ciphertext, ciphertext_block);
 
 		// Save current ciphertext block as previous ciphertext block
-		memcpy(prev_ciphertext, ciphertext_block, AES_BLOCK_SIZE);
+		memcpy(prev_ciphertext, ciphertext_block, len);
 
 		// Append ciphertext block to ciphertext
 		memcpy(cptr, ciphertext_block, len);
