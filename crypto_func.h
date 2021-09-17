@@ -13,4 +13,6 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 
 unsigned char * cbc_encrypt(string& text, string& key);
 
+void cbc_decrypt(unsigned char * ciphertext, int clen, string& key);
+
 #endif

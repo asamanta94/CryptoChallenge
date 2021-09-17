@@ -13,6 +13,7 @@ int main(int argc, const char * argv[])
 	string base64_string;
 	string hex_string;
 	string ascii_string;
+    string key = "YELLOW SUBMARINE";
 
 	// Read file
     _read_file((char *) "10.txt", base64_string);
@@ -31,6 +32,8 @@ int main(int argc, const char * argv[])
     }
 
     cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
+
+    cbc_decrypt((unsigned char *) ascii_string.c_str(), ascii_string.size(), key);
 
 	return 0;
 }

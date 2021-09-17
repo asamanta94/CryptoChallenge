@@ -78,6 +78,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
     plaintext_len = len;
 
+    cout << plaintext << endl;
+
     // Finalize Decryption
     if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
     {
@@ -85,9 +87,6 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
         cout << "Couldn't finalize decryption" << endl;
     }
     plaintext_len += len;
-
-    cout << plaintext << endl;
-    cout << plaintext_len << endl;
 
     // Free memory
     EVP_CIPHER_CTX_free(ctx);
@@ -143,6 +142,8 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
 
+	string out;
+
 	unsigned char * iv = new unsigned char[AES_BLOCK_SIZE];
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
@@ -156,8 +157,10 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 
 		for (int j = 0; j < len; j++)
 		{
-			plaintext[j] = plaintext[j] ^ iv[j];
+			out = out + ((char) plaintext[j]);
 		}
+
+		cout << out << endl;
 
 		memcpy(iv, plaintext, len);
 	}
