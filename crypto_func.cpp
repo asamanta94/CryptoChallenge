@@ -50,7 +50,7 @@ void _handle_errors(void)
     abort();
 }
 
-int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * key, unsigned char * iv, unsigned char * plaintext)
+int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * key, unsigned char * iv, unsigned char * plaintext, bool disable_padding)
 {
     int len = 0;
     int plaintext_len = 0;
@@ -70,7 +70,10 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
         cout << "Couldn't initialize for decryption" << endl;
     }
 
-    EVP_CIPHER_CTX_set_padding(ctx, 0);
+    if (disable_padding)
+	{
+		EVP_CIPHER_CTX_set_padding(ctx, 0);
+	}
 
     // Decrypt text
     if(EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len) != 1)
@@ -94,7 +97,7 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     return plaintext_len;
 }
 
-int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * key, unsigned char * iv, unsigned char * ciphertext)
+int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * key, unsigned char * iv, unsigned char * ciphertext, bool disable_padding)
 {
 	EVP_CIPHER_CTX *ctx;
 
@@ -114,6 +117,11 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	{
 		_handle_errors();
 	    cout << "Couldn't initialize for encryption" << endl;
+	}
+
+	if (disable_padding)
+	{
+		EVP_CIPHER_CTX_set_padding(ctx, 0);
 	}
 
 	// Encrypt text
@@ -138,15 +146,13 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	return ciphertext_len;
 }
 
-void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
+void cbc_decrypt(unsigned char * ciphertext, int clen, string& key, string& out)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
 		plaintext[i] = 0x0;
 	}
-
-	string out;
 
 	unsigned char * iv = new unsigned char[AES_BLOCK_SIZE];
 	for (int i = 0; i < (AES_BLOCK_SIZE); i++)
@@ -166,15 +172,13 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 		lkey[i] = key[i];
 	}
 
-	unsigned char * block = new unsigned char[AES_BLOCK_SIZE];
-	for (int i = 0; i < (AES_BLOCK_SIZE); i++)
-	{
-		block[i] = ct[i];
-	}
+	// Key needs to be padded here - for this task, pad according to PKCS#7 padding instead of 0 padding
+	unsigned char * key_padded = NULL;
+	unsigned int key_padded_len = pkcs7_padding((unsigned char *) key.c_str(), key.size(), &key_padded);
 
 	for (int i = 0; i < (clen / (AES_BLOCK_SIZE)); i++)
 	{
-		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, lkey, NULL, plaintext);
+		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, key_padded, NULL, plaintext, true);
 
 		for (int j = 0; j < len; j++)
 		{
@@ -184,35 +188,36 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 		memcpy(iv, ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE);
 	}
 
+	cout << out << endl;
+
 	// Unpad the text
 	out.erase(out.length() - ((int) out[out.length() - 1]), out.length());
-
-	cout << out;
 }
 
 unsigned char * cbc_encrypt(string& text, string& key)
 {
 	unsigned char * plaintext_padded = NULL;
 
-	// Pad plaintext because OpenSSL AES uses PKCS padding and a block size of 16 bytes
+	unsigned char * key_padded = NULL;
+
+	// Pad plaintext & key because OpenSSL AES uses PKCS padding and a block size of 16 bytes on both the key and the plaintext
 	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) text.c_str(), text.size(), &plaintext_padded);
+
+	unsigned int key_padded_len = pkcs7_padding((unsigned char *) key.c_str(), key.size(), &key_padded);
 
 	unsigned char * ptr = plaintext_padded;
 
 	unsigned char * xor_pt = new unsigned char[AES_BLOCK_SIZE];
 
-	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE * 2];
+	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE];
 
 	// Use initialization vector of all 0's
-	for (int i = 0; i < (AES_BLOCK_SIZE * 2); i++)
-	{
-		prev_ciphertext[i] = 0x0;
-	}
+	memset(prev_ciphertext, 0x0, AES_BLOCK_SIZE);
 
 	// Allocate a ciphertext length twize the size of AES_BLOCK_SIZE, because OpenSSL follows PKCS#7 padding
-	unsigned char * ciphertext_block = new unsigned char[AES_BLOCK_SIZE * 2];
+	unsigned char * ciphertext_block = new unsigned char[AES_BLOCK_SIZE];
 
-	unsigned char * ciphertext = new unsigned char[plaintext_padded_len * 2];
+	unsigned char * ciphertext = new unsigned char[plaintext_padded_len];
 
 	unsigned char * cptr = ciphertext;
 
@@ -223,11 +228,11 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		// XOR previous ciphertext block to current plaintext block
 		for (int j = 0; j < AES_BLOCK_SIZE; j++)
 		{
-			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)];
+			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)] ^ prev_ciphertext[j];
 		}
 
 		// Encrypt block
-		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, (unsigned char *) key.c_str(), prev_ciphertext, ciphertext_block);
+		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, key_padded, NULL, ciphertext_block, true);
 
 		// Save current ciphertext block as previous ciphertext block
 		memcpy(prev_ciphertext, ciphertext_block, len);
@@ -235,16 +240,14 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		// Append ciphertext block to ciphertext
 		memcpy(cptr, ciphertext_block, len);
 
-		// Increment pointer to next block
-		ptr += AES_BLOCK_SIZE;
-
 		cptr += len;
 		clen += len;
 	}
 
 	delete[] plaintext_padded;
-
-	// cbc_decrypt(ciphertext, clen, key);
+	delete[] key_padded;
+	delete[] prev_ciphertext;
+	delete[] xor_pt;
 
 	return ciphertext;
 }

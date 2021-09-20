@@ -31,9 +31,17 @@ int main(int argc, const char * argv[])
     	iv[i] = 0x0;
     }
 
-    cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
+    unsigned char * ct = cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
 
-    cbc_decrypt((unsigned char *) ascii_string.c_str(), ascii_string.size(), key);
+    string out;
+
+    cbc_decrypt(ct, strlen((char *) ct), TEST_KEY, out);
+
+    cout << out << endl;
+
+    string out2;
+
+    cbc_decrypt((unsigned char *) ascii_string.c_str(), ascii_string.size(), key, out2);
 
 	return 0;
 }
