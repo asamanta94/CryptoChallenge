@@ -80,8 +80,6 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
     }
     plaintext_len = len;
 
-    cout << plaintext << endl;
-
     // Finalize Decryption
     if(EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
     {
@@ -143,29 +141,50 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
+	for (int i = 0; i < AES_BLOCK_SIZE; i++)
+	{
+		plaintext[i] = 0x0;
+	}
 
 	string out;
 
 	unsigned char * iv = new unsigned char[AES_BLOCK_SIZE];
-	for (int i = 0; i < AES_BLOCK_SIZE; i++)
+	for (int i = 0; i < (AES_BLOCK_SIZE); i++)
 	{
 		iv[i] = 0x0;
 	}
 
-
-	for (int i = 0; i < (clen / (AES_BLOCK_SIZE * 2)); i++)
+	unsigned char * ct = new unsigned char[clen];
+	for (int i = 0; i < clen; i++)
 	{
-		int len = ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE * 2), AES_BLOCK_SIZE * 2, (unsigned char *) key.c_str(), iv, plaintext);
+		ct[i] = ciphertext[i];
+	}
+
+	unsigned char * lkey = new unsigned char[key.size()];
+	for (int i = 0; i < key.size(); i++)
+	{
+		lkey[i] = key[i];
+	}
+
+	unsigned char * block = new unsigned char[AES_BLOCK_SIZE];
+	for (int i = 0; i < (AES_BLOCK_SIZE); i++)
+	{
+		block[i] = ct[i];
+	}
+
+	for (int i = 0; i < (clen / (AES_BLOCK_SIZE)); i++)
+	{
+		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, lkey, iv, plaintext);
 
 		for (int j = 0; j < len; j++)
 		{
-			out = out + ((char) plaintext[j]);
+			out = out + ((char) (plaintext[j] ^ iv[j]));
 		}
 
-		cout << out << endl;
-
-		memcpy(iv, plaintext, len);
+		memcpy(iv, ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE);
 	}
+
+	cout << out << endl;
 }
 
 unsigned char * cbc_encrypt(string& text, string& key)
@@ -222,7 +241,7 @@ unsigned char * cbc_encrypt(string& text, string& key)
 
 	delete[] plaintext_padded;
 
-	cbc_decrypt(ciphertext, clen, key);
+	// cbc_decrypt(ciphertext, clen, key);
 
 	return ciphertext;
 }
