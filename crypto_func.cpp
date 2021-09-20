@@ -70,6 +70,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
         cout << "Couldn't initialize for decryption" << endl;
     }
 
+    EVP_CIPHER_CTX_set_padding(ctx, 0);
+
     // Decrypt text
     if(EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len) != 1)
     {
