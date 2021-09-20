@@ -174,7 +174,7 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 
 	for (int i = 0; i < (clen / (AES_BLOCK_SIZE)); i++)
 	{
-		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, lkey, iv, plaintext);
+		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, lkey, NULL, plaintext);
 
 		for (int j = 0; j < len; j++)
 		{
@@ -184,7 +184,10 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key)
 		memcpy(iv, ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE);
 	}
 
-	cout << out << endl;
+	// Unpad the text
+	out.erase(out.length() - ((int) out[out.length() - 1]), out.length());
+
+	cout << out;
 }
 
 unsigned char * cbc_encrypt(string& text, string& key)
