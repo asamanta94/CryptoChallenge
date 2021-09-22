@@ -81,6 +81,28 @@ TEST(ChallengeTestGroup, TEST_CBC)
     delete[] ciphertext_test;
 }
 
+/**
+ * Test CBC mode encryption and decryption.
+ */
+TEST(ChallengeTestGroup, TEST_ECB)
+{
+	unsigned char * iv = new unsigned char[16];
+    memset(iv, 0x0, 16);
+
+    unsigned char * ciphertext_test = NULL;
+
+    int ciphertext_len = cbc_encrypt(TEST_PLAINTEXT, TEST_KEY, iv, &ciphertext_test);
+
+    string plaintext_test;
+
+    cbc_decrypt(ciphertext_test, ciphertext_len, iv, TEST_KEY, plaintext_test);
+
+    STRCMP_EQUAL(TEST_PLAINTEXT.c_str(), plaintext_test.c_str());
+
+    delete[] iv;
+    delete[] ciphertext_test;
+}
+
 int main(int argc, const char * argv[])
 {
 	return CommandLineTestRunner::RunAllTests(argc, argv);
