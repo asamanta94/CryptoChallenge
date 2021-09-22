@@ -146,31 +146,9 @@ int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * ke
 	return ciphertext_len;
 }
 
-void cbc_decrypt(unsigned char * ciphertext, int clen, string& key, string& out)
+void cbc_decrypt(unsigned char * ciphertext, int clen, unsigned char * iv, string& key, string& out)
 {
 	unsigned char * plaintext = new unsigned char[AES_BLOCK_SIZE];
-	for (int i = 0; i < AES_BLOCK_SIZE; i++)
-	{
-		plaintext[i] = 0x0;
-	}
-
-	unsigned char * iv = new unsigned char[AES_BLOCK_SIZE];
-	for (int i = 0; i < (AES_BLOCK_SIZE); i++)
-	{
-		iv[i] = 0x0;
-	}
-
-	unsigned char * ct = new unsigned char[clen];
-	for (int i = 0; i < clen; i++)
-	{
-		ct[i] = ciphertext[i];
-	}
-
-	unsigned char * lkey = new unsigned char[key.size()];
-	for (int i = 0; i < key.size(); i++)
-	{
-		lkey[i] = key[i];
-	}
 
 	// Key needs to be padded here - for this task, pad according to PKCS#7 padding instead of 0 padding
 	unsigned char * key_padded = NULL;
@@ -178,48 +156,39 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, string& key, string& out)
 
 	for (int i = 0; i < (clen / (AES_BLOCK_SIZE)); i++)
 	{
-		int len = ecb_decrypt(ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, key_padded, NULL, plaintext, true);
+		int len = ecb_decrypt(ciphertext + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, key_padded, NULL, plaintext, true);
 
 		for (int j = 0; j < len; j++)
 		{
 			out = out + ((char) (plaintext[j] ^ iv[j]));
 		}
 
-		memcpy(iv, ct + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE);
+		memcpy(iv, ciphertext + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE);
 	}
-
-	cout << out << endl;
 
 	// Unpad the text
 	out.erase(out.length() - ((int) out[out.length() - 1]), out.length());
 }
 
-unsigned char * cbc_encrypt(string& text, string& key)
+int cbc_encrypt(string& plaintext, string& key, unsigned char * iv, unsigned char ** ciphertext)
 {
 	unsigned char * plaintext_padded = NULL;
 
 	unsigned char * key_padded = NULL;
 
 	// Pad plaintext & key because OpenSSL AES uses PKCS padding and a block size of 16 bytes on both the key and the plaintext
-	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) text.c_str(), text.size(), &plaintext_padded);
+	unsigned int plaintext_padded_len = pkcs7_padding((unsigned char *) plaintext.c_str(), plaintext.size(), &plaintext_padded);
 
 	unsigned int key_padded_len = pkcs7_padding((unsigned char *) key.c_str(), key.size(), &key_padded);
-
-	unsigned char * ptr = plaintext_padded;
-
-	unsigned char * xor_pt = new unsigned char[AES_BLOCK_SIZE];
-
-	unsigned char * prev_ciphertext = new unsigned char[AES_BLOCK_SIZE];
-
-	// Use initialization vector of all 0's
-	memset(prev_ciphertext, 0x0, AES_BLOCK_SIZE);
 
 	// Allocate a ciphertext length twize the size of AES_BLOCK_SIZE, because OpenSSL follows PKCS#7 padding
 	unsigned char * ciphertext_block = new unsigned char[AES_BLOCK_SIZE];
 
-	unsigned char * ciphertext = new unsigned char[plaintext_padded_len];
+	// Copy initialization vector to previous ciphertext block
+	memcpy(ciphertext_block, iv, AES_BLOCK_SIZE);
 
-	unsigned char * cptr = ciphertext;
+	// Allocate memory for ciphertext
+	*ciphertext = new unsigned char[plaintext_padded_len];
 
 	int clen = 0;
 
@@ -228,26 +197,22 @@ unsigned char * cbc_encrypt(string& text, string& key)
 		// XOR previous ciphertext block to current plaintext block
 		for (int j = 0; j < AES_BLOCK_SIZE; j++)
 		{
-			xor_pt[j] = plaintext_padded[j + (AES_BLOCK_SIZE * i)] ^ prev_ciphertext[j];
+			plaintext_padded[j + (AES_BLOCK_SIZE * i)] ^= ciphertext_block[j];
 		}
 
 		// Encrypt block
-		int len = ecb_encrypt(xor_pt, AES_BLOCK_SIZE, key_padded, NULL, ciphertext_block, true);
-
-		// Save current ciphertext block as previous ciphertext block
-		memcpy(prev_ciphertext, ciphertext_block, len);
+		int len = ecb_encrypt(plaintext_padded + (i * AES_BLOCK_SIZE), AES_BLOCK_SIZE, key_padded, NULL, ciphertext_block, true);
 
 		// Append ciphertext block to ciphertext
-		memcpy(cptr, ciphertext_block, len);
+		memcpy((*ciphertext) + clen, ciphertext_block, len);
 
-		cptr += len;
 		clen += len;
 	}
 
+	// Free all memory used for encryption
 	delete[] plaintext_padded;
 	delete[] key_padded;
-	delete[] prev_ciphertext;
-	delete[] xor_pt;
+	delete[] ciphertext_block;
 
-	return ciphertext;
+	return clen;
 }

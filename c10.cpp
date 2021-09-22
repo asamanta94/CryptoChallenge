@@ -26,22 +26,25 @@ int main(int argc, const char * argv[])
 
     // Create an IV of Zeroes
     unsigned char * iv = new unsigned char[AES_BLOCK_SIZE_BYTES];
-    for (int i = 0; i < AES_BLOCK_SIZE_BYTES; i++)
-    {
-    	iv[i] = 0x0;
-    }
+    memset(iv, 0x0, AES_BLOCK_SIZE_BYTES);
 
-    unsigned char * ct = cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
+    unsigned char * ciphertext_test = NULL;
+
+    int len = cbc_encrypt(TEST_PLAINTEXT, TEST_KEY, iv, &ciphertext_test);
 
     string out;
 
-    cbc_decrypt(ct, strlen((char *) ct), TEST_KEY, out);
+    cbc_decrypt(ciphertext_test, len, iv, TEST_KEY, out);
 
     cout << out << endl;
 
     string out2;
 
-    cbc_decrypt((unsigned char *) ascii_string.c_str(), ascii_string.size(), key, out2);
+    memset(iv, 0x0, AES_BLOCK_SIZE_BYTES);
+
+    cbc_decrypt((unsigned char *) ascii_string.c_str(), ascii_string.size(), iv, key, out2);
+
+    cout << out2 << endl;
 
 	return 0;
 }
