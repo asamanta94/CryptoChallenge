@@ -168,6 +168,10 @@ void cbc_decrypt(unsigned char * ciphertext, int clen, unsigned char * iv, strin
 
 	// Unpad the text
 	out.erase(out.length() - ((int) out[out.length() - 1]), out.length());
+
+	// Free all allocated memory
+	delete[] key_padded;
+	delete[] plaintext;
 }
 
 int cbc_encrypt(string& plaintext, string& key, unsigned char * iv, unsigned char ** ciphertext)

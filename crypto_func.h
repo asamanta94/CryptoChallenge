@@ -11,8 +11,8 @@ int ecb_decrypt(unsigned char * ciphertext, int ciphertext_len, unsigned char * 
 
 int ecb_encrypt(unsigned char * plaintext, int plaintext_len, unsigned char * key, unsigned char * iv, unsigned char * ciphertext, bool disable_padding);
 
-unsigned char * cbc_encrypt(string& text, string& key);
+int cbc_encrypt(string& plaintext, string& key, unsigned char * iv, unsigned char ** ciphertext);
 
-void cbc_decrypt(unsigned char * ciphertext, int clen, string& key, string& out);
+void cbc_decrypt(unsigned char * ciphertext, int clen, unsigned char * iv, string& key, string& out);
 
 #endif

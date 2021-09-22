@@ -56,38 +56,29 @@ TEST(ChallengeTestGroup, TEST_C9)
 	MEMCMP_EQUAL(TEST_BYTES, bytes_padded, TEST_STRING.size() + 4);
 
 	delete[] bytes_padded;
-
 	delete[] bytes;
 }
 
 /**
- * Test ECB mode encryption and decryption.
+ * Test CBC mode encryption and decryption.
  */
-TEST(ChallengeTestGroup, TEST_ENCRYPT)
+TEST(ChallengeTestGroup, TEST_CBC)
 {
-	unsigned char * ciphertext = new unsigned char[TEST_PLAINTEXT.length()];
+	unsigned char * iv = new unsigned char[16];
+    memset(iv, 0x0, 16);
 
-	int len = 0;
+    unsigned char * ciphertext_test = NULL;
 
-	int ciphertext_len = ecb_encrypt((unsigned char *) TEST_PLAINTEXT.c_str(),
-		TEST_PLAINTEXT.size(), (unsigned char *) TEST_KEY.c_str(), NULL, ciphertext);
+    int ciphertext_len = cbc_encrypt(TEST_PLAINTEXT, TEST_KEY, iv, &ciphertext_test);
 
-	unsigned char * pt = new unsigned char[ciphertext_len];
+    string plaintext_test;
 
-	len = ecb_decrypt(ciphertext, ciphertext_len, (unsigned char *) TEST_KEY.c_str(), NULL, pt);
+    cbc_decrypt(ciphertext_test, ciphertext_len, iv, TEST_KEY, plaintext_test);
 
-	// Have to append the NULL character because OpenSSL won't do it automatically.
-	*(pt + len) = '\0';
+    STRCMP_EQUAL(TEST_PLAINTEXT.c_str(), plaintext_test.c_str());
 
-	MEMCMP_EQUAL(TEST_PLAINTEXT.c_str(), pt, len);
-
-	delete[] pt;
-	delete[] ciphertext;
-}
-
-TEST(ChallengeTestGroup, TEST_CBC_ENCRYPT)
-{
-	cbc_encrypt(TEST_PLAINTEXT, TEST_KEY);
+    delete[] iv;
+    delete[] ciphertext_test;
 }
 
 int main(int argc, const char * argv[])
