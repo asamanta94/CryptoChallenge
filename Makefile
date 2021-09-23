@@ -50,10 +50,12 @@ c10: dir common crypto_func c10.cpp
 	$(CC) -o $(OUT_DIR)/c10 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c10.cpp \
 		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
-test: dir common crypto_func test_common.cpp test_challenges.cpp
+test: dir common crypto_func test_common.cpp test_challenges.cpp test_crypto.cpp
 	$(CC) -o $(OUT_DIR)/test $(OUT_DIR)/common test_common.cpp \
 		$(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES)
-	$(CC) -o $(OUT_DIR)/test_2 $(OUT_DIR)/common $(OUT_DIR)/crypto_func test_challenges.cpp \
+	$(CC) -o $(OUT_DIR)/test_challenges $(OUT_DIR)/common $(OUT_DIR)/crypto_func test_challenges.cpp \
+		$(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES) $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
+	$(CC) -o $(OUT_DIR)/test_crypto $(OUT_DIR)/common $(OUT_DIR)/crypto_func test_crypto.cpp \
 		$(CPPUTEST_FLAGS) $(CPPUTEST_LD_LIBRARIES) $(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 clean:
