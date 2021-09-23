@@ -3,8 +3,6 @@
 #include "common.h"
 #include "crypto_func.h"
 
-#define AES_BLOCK_SIZE_BYTES	16
-
 int main(int argc, const char * argv[])
 {
 	string base64_string;

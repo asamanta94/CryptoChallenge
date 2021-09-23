@@ -1,7 +1,7 @@
 # CC=g++
 CC=clang++
 OUT_DIR=./out
-CFLAGS=-Wall -std=c++11
+CFLAGS=-Wall -std=c++17
 CPPUTEST_HOME=../cpputest-3.8
 CPPUTEST_FLAGS=-I$(CPPUTEST_HOME)/include
 OPENSSL_CPP_INCLUDE=-I/usr/local/opt/openssl@1.1/include
@@ -48,6 +48,10 @@ c9: dir common crypto_func c9.cpp
 
 c10: dir common crypto_func c10.cpp
 	$(CC) -o $(OUT_DIR)/c10 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c10.cpp \
+		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
+
+c11: dir common crypto_func c11.cpp
+	$(CC) -o $(OUT_DIR)/c11 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c11.cpp \
 		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 test: dir common crypto_func test_common.cpp test_challenges.cpp test_crypto.cpp

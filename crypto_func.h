@@ -1,6 +1,8 @@
 #ifndef CRYPTO_FUNC_H
 #define CRYPTO_FUNC_H
 
+#define AES_BLOCK_SIZE_BYTES	16
+
 using namespace std;
 
 uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int specified_block_length);
