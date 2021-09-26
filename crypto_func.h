@@ -3,6 +3,9 @@
 
 #define AES_BLOCK_SIZE_BYTES	16
 
+#define MODE_ECB	0
+#define MODE_CBC	1
+
 using namespace std;
 
 uint8_t * add_padding(uint8_t * block, unsigned int block_length, unsigned int specified_block_length);

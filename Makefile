@@ -51,7 +51,7 @@ c10: dir common crypto_func c10.cpp
 		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 c11: dir common crypto_func c11.cpp
-	$(CC) -o $(OUT_DIR)/c11 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c11.cpp \
+	$(CC) $(CFLAGS) -o $(OUT_DIR)/c11 $(OUT_DIR)/common $(OUT_DIR)/crypto_func c11.cpp \
 		$(OPENSSL_LD_LIBRARIES) $(OPENSSL_CRYPTO_LIB)
 
 test: dir common crypto_func test_common.cpp test_challenges.cpp test_crypto.cpp
